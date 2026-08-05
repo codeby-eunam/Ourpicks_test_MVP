@@ -1,0 +1,69 @@
+'use client';
+
+import { useState } from 'react';
+import { RestaurantCompactCard } from './RestaurantCard';
+import { Restaurant } from '@/lib/types';
+
+interface SelectModeProps {
+  restaurants: Restaurant[];
+  onStart: (selected: Restaurant[]) => void;
+}
+
+/** Screen1 - mode=select: 체크박스 리스트로 토너먼트 후보를 고르는 화면 */
+export default function SelectMode({ restaurants, onStart }: SelectModeProps) {
+  // 기본은 전체 선택 상태 (요구사항: "기본 전체 선택 또는 유저가 3~5개 직접 선택 가능")
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(
+    () => new Set(restaurants.map((r) => r.id))
+  );
+
+  const toggle = (id: string) => {
+    setSelectedIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  };
+
+  const selectedCount = selectedIds.size;
+  const canStart = selectedCount >= 2;
+
+  return (
+    <div className="flex flex-1 flex-col">
+      <div className="flex items-center justify-between px-5 pt-4">
+        <p className="text-sm text-ink-muted">
+          토너먼트에 넣을 후보를 골라주세요 ({selectedCount}개 선택됨)
+        </p>
+      </div>
+
+      <ul className="flex flex-col gap-2.5 px-5 py-4 pb-28">
+        {restaurants.map((r, i) => (
+          <li
+            key={r.id}
+            className="animate-fade-in"
+            style={{ animationDelay: `${i * 40}ms` }}
+          >
+            <RestaurantCompactCard
+              restaurant={r}
+              checked={selectedIds.has(r.id)}
+              onToggle={() => toggle(r.id)}
+            />
+          </li>
+        ))}
+      </ul>
+
+      <div className="fixed inset-x-0 bottom-0 mx-auto w-full max-w-[480px] border-t border-slate-100 bg-white/95 p-4 pb-[calc(1rem+env(safe-area-inset-bottom))] backdrop-blur-sm">
+        <button
+          type="button"
+          disabled={!canStart}
+          onClick={() =>
+            onStart(restaurants.filter((r) => selectedIds.has(r.id)))
+          }
+          className="w-full rounded-2xl bg-brand py-3.5 text-center font-semibold text-white shadow-sm transition-all active:scale-[0.98] disabled:cursor-not-allowed disabled:bg-slate-200 disabled:text-slate-400"
+        >
+          선택한 {selectedCount}개로 토너먼트 시작 (10초 소요)
+        </button>
+      </div>
+    </div>
+  );
+}
