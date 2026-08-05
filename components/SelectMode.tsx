@@ -2,15 +2,19 @@
 
 import { useState } from 'react';
 import { RestaurantCompactCard } from './RestaurantCard';
-import { Restaurant } from '@/lib/types';
+import { Region, Restaurant } from '@/lib/types';
+import { getCopy } from '@/lib/copy';
 
 interface SelectModeProps {
+  region: Region;
   restaurants: Restaurant[];
   onStart: (selected: Restaurant[]) => void;
 }
 
 /** Screen1 - mode=select: 체크박스 리스트로 토너먼트 후보를 고르는 화면 */
-export default function SelectMode({ restaurants, onStart }: SelectModeProps) {
+export default function SelectMode({ region, restaurants, onStart }: SelectModeProps) {
+  const t = getCopy(region);
+
   // 기본은 전체 선택 상태 (요구사항: "기본 전체 선택 또는 유저가 3~5개 직접 선택 가능")
   const [selectedIds, setSelectedIds] = useState<Set<string>>(
     () => new Set(restaurants.map((r) => r.id))
@@ -31,9 +35,7 @@ export default function SelectMode({ restaurants, onStart }: SelectModeProps) {
   return (
     <div className="flex flex-1 flex-col">
       <div className="flex items-center justify-between px-5 pt-4">
-        <p className="text-sm text-ink-muted">
-          토너먼트에 넣을 후보를 골라주세요 ({selectedCount}개 선택됨)
-        </p>
+        <p className="text-sm text-ink-muted">{t.select.subtitle(selectedCount)}</p>
       </div>
 
       <ul className="flex flex-col gap-2.5 px-5 py-4 pb-28">
@@ -61,7 +63,7 @@ export default function SelectMode({ restaurants, onStart }: SelectModeProps) {
           }
           className="w-full rounded-2xl bg-brand py-3.5 text-center font-semibold text-white shadow-sm transition-all active:scale-[0.98] disabled:cursor-not-allowed disabled:bg-slate-200 disabled:text-slate-400"
         >
-          선택한 {selectedCount}개로 토너먼트 시작 (10초 소요)
+          {t.select.cta(selectedCount)}
         </button>
       </div>
     </div>

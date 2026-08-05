@@ -10,6 +10,7 @@ import ResultScreen from '@/components/ResultScreen';
 import { fetchRestaurantsByRegion } from '@/lib/restaurants';
 import { createTestResult } from '@/lib/testResults';
 import { FlowStep, InteractionMode, Region, Restaurant } from '@/lib/types';
+import { getCopy } from '@/lib/copy';
 
 function parseRegion(value: string | null): Region {
   return value === 'seattle' ? 'seattle' : 'yeongnam';
@@ -78,7 +79,7 @@ export default function TestFlow() {
     return (
       <div className="flex min-h-screen flex-col items-center justify-center gap-3">
         <div className="h-8 w-8 animate-spin rounded-full border-4 border-brand/20 border-t-brand" />
-        <p className="text-sm text-ink-muted">맛집을 불러오는 중...</p>
+        <p className="text-sm text-ink-muted">{getCopy(region).loading}</p>
       </div>
     );
   }
@@ -93,17 +94,18 @@ export default function TestFlow() {
 
       {step === 'browse' &&
         (mode === 'swipe' ? (
-          <SwipeMode restaurants={restaurants} onStart={handleStartTournament} />
+          <SwipeMode region={region} restaurants={restaurants} onStart={handleStartTournament} />
         ) : (
-          <SelectMode restaurants={restaurants} onStart={handleStartTournament} />
+          <SelectMode region={region} restaurants={restaurants} onStart={handleStartTournament} />
         ))}
 
       {step === 'tournament' && (
-        <Tournament restaurants={candidates} onComplete={handleTournamentComplete} />
+        <Tournament region={region} restaurants={candidates} onComplete={handleTournamentComplete} />
       )}
 
       {step === 'result' && winner && (
         <ResultScreen
+          region={region}
           winner={winner}
           durationSeconds={durationSeconds}
           resultId={resultId}

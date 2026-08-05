@@ -3,9 +3,11 @@
 import { useMemo, useRef, useState } from 'react';
 import { X, Heart } from 'lucide-react';
 import { RestaurantLargeCard } from './RestaurantCard';
-import { Restaurant } from '@/lib/types';
+import { Region, Restaurant } from '@/lib/types';
+import { getCopy } from '@/lib/copy';
 
 interface SwipeModeProps {
+  region: Region;
   restaurants: Restaurant[];
   onStart: (selected: Restaurant[]) => void;
 }
@@ -14,7 +16,8 @@ const MIN_REQUIRED = 4;
 const SWIPE_THRESHOLD = 100;
 
 /** Screen1 - mode=swipe: 카드 1장씩 SKIP / KEEP (또는 좌우 스와이프)로 후보를 고르는 화면 */
-export default function SwipeMode({ restaurants, onStart }: SwipeModeProps) {
+export default function SwipeMode({ region, restaurants, onStart }: SwipeModeProps) {
+  const t = getCopy(region);
   const [index, setIndex] = useState(0);
   const [kept, setKept] = useState<Restaurant[]>([]);
   const [drag, setDrag] = useState({ x: 0, active: false });
@@ -59,18 +62,16 @@ export default function SwipeMode({ restaurants, onStart }: SwipeModeProps) {
     <div className="flex flex-1 flex-col">
       <div className="flex items-center justify-between px-5 pt-4">
         <p className="text-sm text-ink-muted">
-          {isDone ? '모든 카드를 확인했어요' : `${index + 1} / ${restaurants.length}`}
+          {isDone ? t.swipe.doneLabel : t.swipe.progress(index + 1, restaurants.length)}
         </p>
-        <p className="text-sm font-medium text-brand">후보 {kept.length}개 담김</p>
+        <p className="text-sm font-medium text-brand">{t.swipe.keptLabel(kept.length)}</p>
       </div>
 
       <div className="relative flex flex-1 flex-col items-center justify-center px-5 py-4">
         {isDone || !current ? (
           <div className="flex flex-col items-center gap-2 text-center">
-            <p className="text-lg font-semibold text-ink">카드를 다 봤어요!</p>
-            <p className="text-sm text-ink-muted">
-              담은 후보 {kept.length}개로 토너먼트를 시작할 수 있어요.
-            </p>
+            <p className="text-lg font-semibold text-ink">{t.swipe.doneTitle}</p>
+            <p className="text-sm text-ink-muted">{t.swipe.doneSubtitle(kept.length)}</p>
           </div>
         ) : (
           <div className="relative w-full">
@@ -117,7 +118,7 @@ export default function SwipeMode({ restaurants, onStart }: SwipeModeProps) {
           <button
             type="button"
             onClick={() => decide(false)}
-            aria-label="건너뛰기"
+            aria-label={t.swipe.skipAria}
             className="flex h-14 w-14 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-400 shadow-card transition-transform active:scale-90"
           >
             <X size={26} />
@@ -125,7 +126,7 @@ export default function SwipeMode({ restaurants, onStart }: SwipeModeProps) {
           <button
             type="button"
             onClick={() => decide(true)}
-            aria-label="후보 추가"
+            aria-label={t.swipe.keepAria}
             className="flex h-14 w-14 items-center justify-center rounded-full bg-brand text-white shadow-card transition-transform active:scale-90"
           >
             <Heart size={24} fill="white" />
@@ -141,8 +142,8 @@ export default function SwipeMode({ restaurants, onStart }: SwipeModeProps) {
           className="w-full rounded-2xl bg-brand py-3.5 text-center font-semibold text-white shadow-sm transition-all active:scale-[0.98] disabled:cursor-not-allowed disabled:bg-slate-200 disabled:text-slate-400"
         >
           {canStart
-            ? `담은 ${kept.length}개로 토너먼트 시작 (10초 소요)`
-            : `${MIN_REQUIRED}개 이상 담으면 시작할 수 있어요 (${kept.length}/${MIN_REQUIRED})`}
+            ? t.swipe.ctaReady(kept.length)
+            : t.swipe.ctaNotReady(MIN_REQUIRED, kept.length)}
         </button>
       </div>
     </div>

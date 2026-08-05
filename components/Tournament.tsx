@@ -2,9 +2,11 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import { RestaurantLargeCard } from './RestaurantCard';
-import { Restaurant } from '@/lib/types';
+import { Region, Restaurant } from '@/lib/types';
+import { getCopy } from '@/lib/copy';
 
 interface TournamentProps {
+  region: Region;
   restaurants: Restaurant[];
   onComplete: (winner: Restaurant) => void;
 }
@@ -18,15 +20,9 @@ function shuffle<T>(arr: T[]): T[] {
   return copy;
 }
 
-function roundLabel(participantCount: number) {
-  if (participantCount <= 2) return '결승';
-  if (participantCount <= 4) return '4강';
-  if (participantCount <= 8) return '8강';
-  return `${participantCount}강`;
-}
-
 /** Screen2 - 셔플된 후보들을 1:1 단일 엘리미네이션으로 붙여서 최종 1개를 뽑는다. */
-export default function Tournament({ restaurants, onComplete }: TournamentProps) {
+export default function Tournament({ region, restaurants, onComplete }: TournamentProps) {
+  const t = getCopy(region);
   const [participants, setParticipants] = useState<Restaurant[]>(() =>
     shuffle(restaurants)
   );
@@ -79,7 +75,7 @@ export default function Tournament({ restaurants, onComplete }: TournamentProps)
   if (!currentPair || currentPair.length < 2) {
     return (
       <div className="flex flex-1 items-center justify-center py-20">
-        <p className="text-sm text-ink-muted">다음 대결을 준비하는 중...</p>
+        <p className="text-sm text-ink-muted">{t.tournament.preparing}</p>
       </div>
     );
   }
@@ -97,10 +93,10 @@ export default function Tournament({ restaurants, onComplete }: TournamentProps)
     <div className="flex flex-1 flex-col px-5 py-4">
       <div className="mb-4 flex flex-col items-center gap-1">
         <span className="rounded-full bg-brand/10 px-3 py-1 text-xs font-semibold text-brand">
-          {roundLabel(participants.length)}
+          {t.tournament.roundLabel(participants.length)}
         </span>
         <p className="text-xs text-ink-muted">
-          {matchNumberThisRound} / {totalMatchesThisRound} 매치
+          {t.tournament.matchProgress(matchNumberThisRound, totalMatchesThisRound)}
         </p>
       </div>
 
@@ -120,9 +116,7 @@ export default function Tournament({ restaurants, onComplete }: TournamentProps)
         />
       </div>
 
-      <p className="mt-4 text-center text-xs text-ink-muted">
-        마음에 드는 쪽을 눌러주세요
-      </p>
+      <p className="mt-4 text-center text-xs text-ink-muted">{t.tournament.prompt}</p>
     </div>
   );
 }
