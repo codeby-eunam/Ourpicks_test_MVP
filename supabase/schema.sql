@@ -38,8 +38,22 @@ create table if not exists public.test_results (
   survey_q1_help boolean,
   survey_q2_painpoint text,
   survey_q3_coupon boolean,
+  survey_frequency text,
+  survey_decision_method text,
+  survey_pain_point text,
+  survey_satisfaction text,
+  survey_nps_score smallint check (survey_nps_score between 0 and 10),
+  survey_improvement_feedback text,
   created_at timestamptz not null default now()
 );
+
+-- 기존 프로젝트에도 새 설문 컬럼을 안전하게 추가한다.
+alter table public.test_results add column if not exists survey_frequency text;
+alter table public.test_results add column if not exists survey_decision_method text;
+alter table public.test_results add column if not exists survey_pain_point text;
+alter table public.test_results add column if not exists survey_satisfaction text;
+alter table public.test_results add column if not exists survey_nps_score smallint check (survey_nps_score between 0 and 10);
+alter table public.test_results add column if not exists survey_improvement_feedback text;
 
 alter table public.test_results enable row level security;
 

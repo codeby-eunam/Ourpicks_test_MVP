@@ -116,11 +116,23 @@ async function execute(operation: PendingOperation): Promise<unknown | null> {
     const { error } = await supabase
       .from('test_results')
       .update({
-        survey_q1_help: operation.payload.survey_q1_help,
-        survey_q2_painpoint: operation.payload.survey_q2_painpoint,
-        survey_q3_coupon: operation.payload.survey_q3_coupon,
+        survey_frequency: operation.payload.survey_frequency,
+        survey_decision_method: operation.payload.survey_decision_method,
+        survey_pain_point: operation.payload.survey_pain_point,
+        survey_satisfaction: operation.payload.survey_satisfaction,
+        survey_nps_score: operation.payload.survey_nps_score,
+        survey_improvement_feedback: operation.payload.survey_improvement_feedback,
       })
       .eq('id', operation.resultId);
+
+    if (error && (error.code === 'PGRST204' || error.code === '42703')) {
+      const { error: fallbackError } = await supabase
+        .from('test_results')
+        .update({ survey_q2_painpoint: JSON.stringify(operation.payload) })
+        .eq('id', operation.resultId);
+      return fallbackError;
+    }
+
     return error;
   } catch (error) {
     return error;

@@ -19,9 +19,12 @@ export interface TestResultInsert {
 }
 
 export interface SurveyAnswers {
-  survey_q1_help: boolean;
-  survey_q2_painpoint: string;
-  survey_q3_coupon: boolean;
+  survey_frequency: string | null;
+  survey_decision_method: string | null;
+  survey_pain_point: string | null;
+  survey_satisfaction: string;
+  survey_nps_score: number;
+  survey_improvement_feedback: string;
 }
 
 /** app/test 플로우의 화면 단계 */
