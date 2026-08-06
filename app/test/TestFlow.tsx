@@ -7,6 +7,7 @@ import SelectMode from '@/components/SelectMode';
 import SwipeMode from '@/components/SwipeMode';
 import Tournament from '@/components/Tournament';
 import ResultScreen from '@/components/ResultScreen';
+import StartScreen from '@/components/StartScreen';
 import { fetchRestaurantsByRegion } from '@/lib/restaurants';
 import {
   createTestResult,
@@ -39,7 +40,7 @@ export default function TestFlow() {
     setStep('loading');
     const data = await fetchRestaurantsByRegion(region);
     setRestaurants(data);
-    setStep('browse');
+    setStep('intro');
   }, [region]);
 
   useEffect(() => {
@@ -90,7 +91,7 @@ export default function TestFlow() {
     setStartedAt(null);
     setDurationSeconds(0);
     setResultId(null);
-    setStep('browse');
+    setStep('intro');
   }
 
   if (step === 'loading') {
@@ -107,8 +108,20 @@ export default function TestFlow() {
       <Header
         region={region}
         mode={mode}
-        step={step === 'browse' ? 'browse' : step === 'tournament' ? 'tournament' : 'result'}
+        step={
+          step === 'intro'
+            ? 'intro'
+            : step === 'browse'
+              ? 'browse'
+              : step === 'tournament'
+                ? 'tournament'
+                : 'result'
+        }
       />
+
+      {step === 'intro' && (
+        <StartScreen region={region} mode={mode} onStart={() => setStep('browse')} />
+      )}
 
       {step === 'browse' &&
         (mode === 'swipe' ? (

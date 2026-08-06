@@ -11,9 +11,22 @@ const COPY = {
       swipe: '카드를 넘기며 후보를 골라보세요',
     },
     stepLabel: {
+      intro: '시작 안내',
       browse: '후보 선별',
       tournament: '1:1 토너먼트',
       result: '결과 발표',
+    },
+    intro: {
+      modeLabel: {
+        select: '리스트 선택 모드',
+        swipe: '스와이프 선택 모드',
+      },
+      title: '오늘의 맛집을 골라볼까요?',
+      description: {
+        select: '마음에 드는 후보를 리스트에서 고른 뒤 토너먼트로 최종 맛집을 정해보세요.',
+        swipe: '카드를 좌우로 넘겨 후보를 고른 뒤 토너먼트로 최종 맛집을 정해보세요.',
+      },
+      cta: '시작하기',
     },
     select: {
       subtitle: (n: number) => `토너먼트에 넣을 후보를 골라주세요 (${n}개 선택됨)`,
@@ -63,9 +76,22 @@ const COPY = {
       swipe: 'Swipe through cards to pick your candidates',
     },
     stepLabel: {
+      intro: 'Get Started',
       browse: 'Pick Candidates',
       tournament: '1:1 Tournament',
       result: 'Result',
+    },
+    intro: {
+      modeLabel: {
+        select: 'List Selection',
+        swipe: 'Swipe Selection',
+      },
+      title: 'Ready to pick a restaurant?',
+      description: {
+        select: 'Choose candidates from the list, then find your final pick in a quick tournament.',
+        swipe: 'Swipe through the cards to keep candidates, then find your final pick in a quick tournament.',
+      },
+      cta: 'Get Started',
     },
     select: {
       subtitle: (n: number) => `Pick your tournament candidates (${n} selected)`,

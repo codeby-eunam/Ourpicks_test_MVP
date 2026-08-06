@@ -91,6 +91,35 @@ async function verifyKakaoPlace({ name }) {
   return json.documents?.[0] ?? null;
 }
 
+/**
+ * Kakao 로컬 API는 사진을 제공하지 않으므로, 같은 가게를 Google Places에서 검색해
+ * 사진만 가져와서 보완한다 (평점은 그대로 Kakao 쪽 로직 - 랜덤 fallback 값을 유지).
+ */
+async function findGooglePhotoUrl(name) {
+  if (!GOOGLE_KEY) return null;
+
+  const url = new URL('https://maps.googleapis.com/maps/api/place/findplacefromtext/json');
+  url.searchParams.set('input', name);
+  url.searchParams.set('inputtype', 'textquery');
+  // 영남대 반경 3km로 바이어스 (가게별 정확한 좌표가 없어 Seattle보다 넓게 잡음)
+  url.searchParams.set('locationbias', `circle:3000@${YEONGNAM_CENTER.lat},${YEONGNAM_CENTER.lng}`);
+  url.searchParams.set('fields', 'name,photos');
+  url.searchParams.set('key', GOOGLE_KEY);
+
+  const res = await fetch(url);
+  const json = await res.json();
+  const candidate = json.candidates?.[0];
+  const photoRef = candidate?.photos?.[0]?.photo_reference;
+  if (json.status !== 'OK' || !photoRef) return null;
+
+  console.log(`  [google 사진 확보] ${name} → "${candidate.name}"`);
+  const photoUrl = new URL('https://maps.googleapis.com/maps/api/place/photo');
+  photoUrl.searchParams.set('maxwidth', '800');
+  photoUrl.searchParams.set('photo_reference', photoRef);
+  photoUrl.searchParams.set('key', GOOGLE_KEY);
+  return photoUrl.toString();
+}
+
 async function buildYeongnamRow(place) {
   const matched = KAKAO_KEY ? await verifyKakaoPlace(place) : null;
   if (matched) {
@@ -99,12 +128,19 @@ async function buildYeongnamRow(place) {
     console.warn(`  [kakao 매칭 실패] "${place.name}" - 이름/카테고리는 입력값 그대로 저장합니다.`);
   }
 
+  const googlePhotoUrl = await findGooglePhotoUrl(place.name);
+  if (!googlePhotoUrl) {
+    console.warn(`  [google 사진 없음] "${place.name}" - placeholder 이미지로 대체합니다.`);
+  }
+
   return {
     region: 'yeongnam',
     name: place.name,
     category: place.category,
-    // Kakao 로컬 API는 사진을 제공하지 않으므로 이름을 시드로 한 placeholder 이미지를 사용.
-    image_url: `https://picsum.photos/seed/${encodeURIComponent(place.name)}/600/450`,
+    // 구글에서 사진을 찾으면 그 사진을 쓰고, 못 찾으면 이름을 시드로 한 placeholder 이미지를 사용.
+    image_url:
+      googlePhotoUrl ?? `https://picsum.photos/seed/${encodeURIComponent(place.name)}/600/450`,
+    // 평점은 Kakao/구글 둘 다 이 가게들에 대해 신뢰할 만한 값을 안 주므로 기존 랜덤 fallback을 유지한다.
     rating: Number((4.0 + Math.random() * 0.6).toFixed(1)),
   };
 }

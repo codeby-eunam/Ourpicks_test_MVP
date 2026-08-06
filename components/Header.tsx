@@ -10,7 +10,7 @@ const REGION_LABEL: Record<Region, string> = {
 interface HeaderProps {
   region: Region;
   mode: InteractionMode;
-  step: 'browse' | 'tournament' | 'result';
+  step: 'intro' | 'browse' | 'tournament' | 'result';
 }
 
 export default function Header({ region, mode, step }: HeaderProps) {

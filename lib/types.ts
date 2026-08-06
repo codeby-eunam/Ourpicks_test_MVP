@@ -25,4 +25,4 @@ export interface SurveyAnswers {
 }
 
 /** app/test 플로우의 화면 단계 */
-export type FlowStep = 'loading' | 'browse' | 'tournament' | 'result';
+export type FlowStep = 'loading' | 'intro' | 'browse' | 'tournament' | 'result';
