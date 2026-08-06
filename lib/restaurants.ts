@@ -2,14 +2,25 @@ import { supabase } from './supabaseClient';
 import { Region, Restaurant } from './types';
 import { getMockRestaurantsByRegion } from './mockRestaurants';
 
+const useRemoteRestaurants =
+  process.env.NEXT_PUBLIC_USE_REMOTE_RESTAURANTS === 'true';
+
 /**
- * region에 해당하는 식당 목록을 Supabase에서 불러온다.
- * 연결 실패/데이터 없음 등 어떤 이유로든 빈 결과가 오면 데모가 끊기지 않도록
- * mock 데이터로 자동 폴백한다.
+ * region에 해당하는 식당 목록을 반환한다.
+ * 기본값은 API 비용이 없는 번들 데이터이며, 원격 목록을 활성화한 경우에만
+ * Supabase를 조회한다. 연결 실패나 빈 결과에는 번들 데이터로 폴백한다.
  */
 export async function fetchRestaurantsByRegion(
   region: Region
 ): Promise<Restaurant[]> {
+  // The restaurant catalog is small and changes infrequently. Serve the copy
+  // bundled with the app by default so opening the test does not create a
+  // Supabase request for every visitor. Set NEXT_PUBLIC_USE_REMOTE_RESTAURANTS
+  // to "true" only when the catalog needs to be managed from Supabase.
+  if (!useRemoteRestaurants) {
+    return getMockRestaurantsByRegion(region);
+  }
+
   try {
     const { data, error } = await supabase
       .from('restaurants')

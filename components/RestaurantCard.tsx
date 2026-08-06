@@ -1,8 +1,8 @@
 'use client';
 
-import Image from 'next/image';
 import { Star, Check } from 'lucide-react';
 import { Restaurant } from '@/lib/types';
+import ReliableImage from './ReliableImage';
 
 interface CompactCardProps {
   restaurant: Restaurant;
@@ -25,10 +25,9 @@ export function RestaurantCompactCard({
       }`}
     >
       <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-xl bg-slate-100">
-        <Image
+        <ReliableImage
           src={restaurant.image_url}
           alt={restaurant.name}
-          fill
           sizes="64px"
           className="object-cover"
         />
@@ -78,13 +77,11 @@ export function RestaurantLargeCard({
       } ${className}`}
     >
       <div className="relative aspect-[4/3] w-full bg-slate-100">
-        <Image
+        <ReliableImage
           src={restaurant.image_url}
           alt={restaurant.name}
-          fill
           sizes="480px"
           className="object-cover"
-          priority
         />
         {badge && (
           <span className="absolute left-3 top-3 rounded-full bg-black/55 px-2.5 py-1 text-xs font-medium text-white backdrop-blur-sm">

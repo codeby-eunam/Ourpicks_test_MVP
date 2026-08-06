@@ -8,7 +8,10 @@ import SwipeMode from '@/components/SwipeMode';
 import Tournament from '@/components/Tournament';
 import ResultScreen from '@/components/ResultScreen';
 import { fetchRestaurantsByRegion } from '@/lib/restaurants';
-import { createTestResult } from '@/lib/testResults';
+import {
+  createTestResult,
+  flushPendingTestResults,
+} from '@/lib/testResults';
 import { FlowStep, InteractionMode, Region, Restaurant } from '@/lib/types';
 import { getCopy } from '@/lib/copy';
 
@@ -44,19 +47,34 @@ export default function TestFlow() {
     // region이 바뀌면(쿼리 파라미터 변경) 전체 플로우를 리셋한다.
   }, [loadRestaurants]);
 
+  useEffect(() => {
+    const flush = () => void flushPendingTestResults();
+    const flushWhenVisible = () => {
+      if (document.visibilityState === 'visible') flush();
+    };
+
+    flush();
+    window.addEventListener('online', flush);
+    document.addEventListener('visibilitychange', flushWhenVisible);
+    return () => {
+      window.removeEventListener('online', flush);
+      document.removeEventListener('visibilitychange', flushWhenVisible);
+    };
+  }, []);
+
   function handleStartTournament(selected: Restaurant[]) {
     setCandidates(selected);
     setStartedAt(Date.now());
     setStep('tournament');
   }
 
-  async function handleTournamentComplete(finalWinner: Restaurant) {
+  function handleTournamentComplete(finalWinner: Restaurant) {
     const elapsed = startedAt ? Math.max(1, Math.round((Date.now() - startedAt) / 1000)) : 0;
     setWinner(finalWinner);
     setDurationSeconds(elapsed);
     setStep('result');
 
-    const id = await createTestResult({
+    const id = createTestResult({
       region,
       interaction_mode: mode,
       selected_restaurant_id: finalWinner.id,

@@ -1,10 +1,10 @@
 'use client';
 
-import Image from 'next/image';
 import { Clock, Star } from 'lucide-react';
 import { Region, Restaurant } from '@/lib/types';
 import { getCopy } from '@/lib/copy';
 import SurveyForm from './SurveyForm';
+import ReliableImage from './ReliableImage';
 
 interface ResultScreenProps {
   region: Region;
@@ -28,10 +28,9 @@ export default function ResultScreen({
     <div className="flex flex-col gap-5 px-5 pb-10 pt-2">
       <div className="animate-pop-in flex flex-col items-center gap-3 rounded-3xl border border-slate-100 bg-white p-5 text-center shadow-card">
         <div className="relative h-44 w-full overflow-hidden rounded-2xl bg-slate-100">
-          <Image
+          <ReliableImage
             src={winner.image_url}
             alt={winner.name}
-            fill
             sizes="440px"
             className="object-cover"
             priority
