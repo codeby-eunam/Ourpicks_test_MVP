@@ -90,8 +90,8 @@ export default function Tournament({ region, restaurants, onComplete }: Tourname
     pairs.slice(0, matchIndex + 1).filter((p) => p.length === 2).length;
 
   return (
-    <div className="flex flex-1 flex-col px-5 py-4">
-      <div className="mb-4 flex flex-col items-center gap-1">
+    <div className="flex min-h-0 flex-1 flex-col px-5 py-3">
+      <div className="mb-2 flex shrink-0 flex-col items-center gap-1">
         <span className="rounded-full bg-brand/10 px-3 py-1 text-xs font-semibold text-brand">
           {t.tournament.roundLabel(participants.length)}
         </span>
@@ -100,12 +100,17 @@ export default function Tournament({ region, restaurants, onComplete }: Tourname
         </p>
       </div>
 
-      <div key={`${animKey}-${matchIndex}`} className="flex flex-1 flex-col justify-center gap-3 animate-pop-in">
+      {/* min-h-0 덕분에 화면 높이가 좁아도 두 카드 + VS가 스크롤 없이 항상 다 보인다. */}
+      <div
+        key={`${animKey}-${matchIndex}`}
+        className="flex min-h-0 flex-1 flex-col gap-2 animate-pop-in"
+      >
         <RestaurantLargeCard
           restaurant={currentPair[0]}
           onClick={() => pick(currentPair[0])}
+          fill
         />
-        <div className="flex items-center justify-center py-1">
+        <div className="flex shrink-0 items-center justify-center py-0.5">
           <span className="rounded-full border border-slate-200 bg-white px-3 py-1 text-xs font-bold text-ink-muted shadow-sm">
             VS
           </span>
@@ -113,10 +118,11 @@ export default function Tournament({ region, restaurants, onComplete }: Tourname
         <RestaurantLargeCard
           restaurant={currentPair[1]}
           onClick={() => pick(currentPair[1])}
+          fill
         />
       </div>
 
-      <p className="mt-4 text-center text-xs text-ink-muted">{t.tournament.prompt}</p>
+      <p className="mt-2 shrink-0 text-center text-xs text-ink-muted">{t.tournament.prompt}</p>
     </div>
   );
 }

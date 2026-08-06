@@ -30,7 +30,7 @@ const COPY = {
     },
     select: {
       subtitle: (n: number) => `토너먼트에 넣을 후보를 골라주세요 (${n}개 선택됨)`,
-      cta: (n: number) => `선택한 ${n}개로 토너먼트 시작 (10초 소요)`,
+      cta: (n: number) => `선택한 ${n}개로 토너먼트 시작`,
     },
     swipe: {
       progress: (i: number, total: number) => `${i} / ${total}`,
@@ -95,7 +95,7 @@ const COPY = {
     },
     select: {
       subtitle: (n: number) => `Pick your tournament candidates (${n} selected)`,
-      cta: (n: number) => `Start tournament with ${n} picks (~10 sec)`,
+      cta: (n: number) => `Start tournament with ${n} picks`,
     },
     swipe: {
       progress: (i: number, total: number) => `${i} / ${total}`,

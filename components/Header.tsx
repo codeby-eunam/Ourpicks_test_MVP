@@ -17,7 +17,7 @@ export default function Header({ region, mode, step }: HeaderProps) {
   const t = getCopy(region);
 
   return (
-    <header className="sticky top-0 z-20 border-b border-slate-100 bg-surface/90 px-5 pb-3 pt-5 backdrop-blur-sm">
+    <header className="sticky top-0 z-20 shrink-0 border-b border-slate-100 bg-surface/90 px-5 pb-3 pt-5 backdrop-blur-sm">
       <div className="flex items-center gap-2">
         <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-brand text-white">
           <UtensilsCrossed size={16} />

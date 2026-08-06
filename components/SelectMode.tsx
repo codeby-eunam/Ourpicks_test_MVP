@@ -15,10 +15,8 @@ interface SelectModeProps {
 export default function SelectMode({ region, restaurants, onStart }: SelectModeProps) {
   const t = getCopy(region);
 
-  // 기본은 전체 선택 상태 (요구사항: "기본 전체 선택 또는 유저가 3~5개 직접 선택 가능")
-  const [selectedIds, setSelectedIds] = useState<Set<string>>(
-    () => new Set(restaurants.map((r) => r.id))
-  );
+  // 사용자가 리스트에서 후보를 직접 선택하도록 초기에는 아무것도 선택하지 않는다.
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(() => new Set());
 
   const toggle = (id: string) => {
     setSelectedIds((prev) => {

@@ -104,7 +104,11 @@ export default function TestFlow() {
   }
 
   return (
-    <div className="flex min-h-screen flex-col">
+    <div
+      className={`flex flex-col ${
+        step === 'tournament' ? 'h-dvh overflow-hidden' : 'min-h-screen'
+      }`}
+    >
       <Header
         region={region}
         mode={mode}
